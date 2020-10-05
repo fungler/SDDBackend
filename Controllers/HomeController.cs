@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using SDDBackend.Models;
+using Newtonsoft.Json;
 
 namespace SDDBackend.Controllers
 {
@@ -16,20 +18,18 @@ namespace SDDBackend.Controllers
         {
             return "Running";
         }
+
+        [HttpPost("registerJson")]
+        public async Task<IActionResult> Post([FromBody] InstallationRoot payload)
+        {
+            // extract info
+            //return Ok("Recieved: " + payload.installation.tags.costcenter);
+
+            //return payload as json string
+            return Ok(JsonConvert.SerializeObject(payload));
+        }
+
         /*
-        // GET api/<HomeController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<HomeController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
         // PUT api/<HomeController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
