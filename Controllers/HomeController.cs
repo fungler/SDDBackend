@@ -26,20 +26,14 @@ namespace SDDBackend.Controllers
             //return Ok("Recieved: " + payload.installation.tags.costcenter);
 
             //return payload as json string
-            return Ok(JsonConvert.SerializeObject(payload));
+            //return Ok(JsonConvert.SerializeObject(payload));
+
+            var jsonString = JsonConvert.SerializeObject(payload, Formatting.Indented);
+
+            await GitController.createFile("Testing JSON 2", jsonString, "./installation/some_installation2");
+
+            return Ok("My name sure do be jeff");
         }
 
-        /*
-        // PUT api/<HomeController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<HomeController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }*/
     }
 }
