@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SDDBackend.Models;
 using Newtonsoft.Json;
+using Octokit;
 
 namespace SDDBackend.Controllers
 {
@@ -22,17 +23,24 @@ namespace SDDBackend.Controllers
         [HttpPost("registerJson")]
         public async Task<IActionResult> Post([FromBody] InstallationRoot payload)
         {
-            // extract info
-            //return Ok("Recieved: " + payload.installation.tags.costcenter);
+            try
+            {
+                var jsonString = JsonConvert.SerializeObject(payload, Formatting.Indented);
+                foreach (Vm vm in payload.installation.vms)
+                {
+                    await GitController.createFile("Create: " + payload.installation.name, jsonString, "./installations/" + payload.installation.name + "/" + vm.name + ".json");
+                }
+            }
+            catch (ApiValidationException e)
+            {
+                return BadRequest("{\"status\": 400, \"message\": \"File already exists in github repo.\"}");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("{\"status\": 400, \"message\": \"Unknown error.\"}");
+            }
 
-            //return payload as json string
-            //return Ok(JsonConvert.SerializeObject(payload));
-
-            var jsonString = JsonConvert.SerializeObject(payload, Formatting.Indented);
-
-            await GitController.createFile("Testing JSON 2", jsonString, "./installation/some_installation2");
-
-            return Ok("My name sure do be jeff");
+            return Ok("{\"status\": 200, \"message\": \"Success.\"}");
         }
 
     }

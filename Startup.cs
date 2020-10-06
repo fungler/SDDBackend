@@ -42,10 +42,10 @@ namespace SDDBackend
 
             app.UseAuthorization();
 
-            app.UseCors(policy =>
+            /*app.UseCors(policy =>
             policy.WithOrigins("http://localhost:6000", "https://localhost:6001")
             .AllowAnyMethod()
-            .AllowCredentials());
+            .AllowCredentials());*/
 
             app.UseEndpoints(endpoints =>
             {
