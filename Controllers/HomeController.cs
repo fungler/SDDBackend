@@ -23,13 +23,15 @@ namespace SDDBackend.Controllers
         [HttpPost("registerJson")]
         public async Task<IActionResult> Post([FromBody] InstallationRoot payload)
         {
+
             try
             {
                 var jsonString = JsonConvert.SerializeObject(payload, Formatting.Indented);
-                foreach (Vm vm in payload.installation.vms)
+                /*foreach (Vm vm in payload.installation.vms)
                 {
                     await GitController.createFile("Create: " + payload.installation.name, jsonString, "./installations/" + payload.installation.name + "/" + vm.name + ".json");
-                }
+                }*/
+                await GitController.createFile("Create: " + payload.installation.name, jsonString, "./installations/" + payload.installation.name + "/" + payload.installation.name + ".json");
             }
             catch (ApiValidationException e)
             {
