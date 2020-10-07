@@ -21,7 +21,7 @@ namespace SDDBackend.Controllers
         }
 
         [HttpPost("registerJson")]
-        public async Task<IActionResult> Post([FromBody] InstallationRoot payload)
+        public async Task<IActionResult> postJson([FromBody] InstallationRoot payload)
         {
 
             try
@@ -43,6 +43,23 @@ namespace SDDBackend.Controllers
             }
 
             return Ok("{\"status\": 200, \"message\": \"Success.\"}");
+        }
+
+        [HttpGet("registerJson/getFile")]
+        public async Task<IActionResult> getJson([FromQuery] string path)
+        {
+            try
+            {
+                var content = await GitController.getFile(path);
+                var res = content.ElementAt<RepositoryContent>(0);
+
+                return Ok(res.Content);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error getting file.");
+            }
+
         }
 
     }
