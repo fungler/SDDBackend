@@ -26,6 +26,7 @@ namespace SDDBackend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,12 +41,13 @@ namespace SDDBackend
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseCors(policy =>
+                policy.WithOrigins("http://localhost:6000", "https://localhost:6001")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
 
-            /*app.UseCors(policy =>
-            policy.WithOrigins("http://localhost:6000", "https://localhost:6001")
-            .AllowAnyMethod()
-            .AllowCredentials());*/
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

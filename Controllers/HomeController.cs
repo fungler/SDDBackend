@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using SDDBackend.Models;
 using Newtonsoft.Json;
 using Octokit;
+using Microsoft.AspNetCore.Cors;
 
 namespace SDDBackend.Controllers
 {
@@ -22,7 +23,9 @@ namespace SDDBackend.Controllers
 
         [HttpPost("registerJson")]
         public async Task<IActionResult> postJson([FromBody] InstallationRoot payload)
-        {
+        {  
+
+            Console.Write("Request" + payload.installation.name);
 
             try
             {
