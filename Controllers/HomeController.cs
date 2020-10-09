@@ -59,7 +59,6 @@ namespace SDDBackend.Controllers
             {
                 return BadRequest("Error getting file.");
             }
-
         }
 
     }
