@@ -24,9 +24,6 @@ namespace SDDBackend.Controllers
         [HttpPost("registerJson")]
         public async Task<IActionResult> postJson([FromBody] InstallationRoot payload)
         {  
-
-            Console.Write("Request" + payload.installation.name);
-
             try
             {
                 var jsonString = JsonConvert.SerializeObject(payload, Formatting.Indented);
@@ -35,6 +32,30 @@ namespace SDDBackend.Controllers
                     await GitController.createFile("Create: " + payload.installation.name, jsonString, "./installations/" + payload.installation.name + "/" + vm.name + ".json");
                 }*/
                 await GitController.createFile("Create: " + payload.installation.name, jsonString, "./installations/" + payload.installation.name + "/" + payload.installation.name + ".json");
+            }
+            catch (ApiValidationException e)
+            {
+                return BadRequest("{\"status\": 400, \"message\": \"File already exists in github repo.\"}");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("{\"status\": 400, \"message\": \"Unknown error.\"}");
+            }
+
+            return Ok("{\"status\": 200, \"message\": \"Success.\"}");
+        }
+
+        [HttpPost("registerJson/copy/{newName}")]
+        public async Task<IActionResult> copyJson([FromBody] InstallationRoot payload, string newName)
+        {
+            try
+            {
+                // change payload to represent new data
+
+                string jsonString = JsonConvert.SerializeObject(payload, Formatting.Indented);
+
+                jsonString = jsonString.Replace(payload.installation.name, newName);
+                await GitController.createFile("Copy: " + payload.installation.name + "-" + newName, jsonString, "./installations/" + payload.installation.name + "/copies/" + payload.installation.name + "-" + newName + ".json");
             }
             catch (ApiValidationException e)
             {
@@ -63,6 +84,8 @@ namespace SDDBackend.Controllers
                 return BadRequest("Error getting file.");
             }
         }
+
+
 
     }
 }
