@@ -45,17 +45,24 @@ namespace SDDBackend.Controllers
             return Ok("{\"status\": 200, \"message\": \"Success.\"}");
         }
 
-        [HttpPost("registerJson/copy/{newName}")]
-        public async Task<IActionResult> copyJson([FromBody] InstallationRoot payload, string newName)
+        [HttpPost("registerJson/copy")]
+        public async Task<IActionResult> copyJson([FromBody] CopyData data)
         {
             try
             {
-                // change payload to represent new data
 
-                string jsonString = JsonConvert.SerializeObject(payload, Formatting.Indented);
+                IActionResult actionResult = await getJson("installations/" + data.oldName + "/" + data.oldName + ".json");
+                OkObjectResult content = (OkObjectResult)actionResult;
 
-                jsonString = jsonString.Replace(payload.installation.name, newName);
-                await GitController.createFile("Copy: " + payload.installation.name + "-" + newName, jsonString, "./installations/" + payload.installation.name + "/copies/" + payload.installation.name + "-" + newName + ".json");
+                string jsonString = (string)content.Value;
+                jsonString = jsonString.Replace(data.oldName, data.newName);
+
+                await GitController.createFile("Copy: " + data.oldName + " as " + data.newName, jsonString, "./installations/" + data.newName + "/" + data.newName + ".json");
+            
+            }
+            catch (NullReferenceException e)
+            {
+                return BadRequest("{\"status\": 400, \"message\": \"Could not find file with the given filename.\"}");
             }
             catch (ApiValidationException e)
             {
