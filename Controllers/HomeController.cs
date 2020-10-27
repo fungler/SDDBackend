@@ -92,7 +92,27 @@ namespace SDDBackend.Controllers
             }
         }
 
+        [HttpGet("registerJson/getState")]
+        public async Task<IActionResult> getState([FromQuery] string name)
+        {
+            string path = "installations/" + name + "/" + name + ".json";
 
+            try
+            {
+                var content = await GitController.getFile(path);
+                var res = content.ElementAt<RepositoryContent>(0);
+
+                InstallationRoot installation = JsonConvert.DeserializeObject<InstallationRoot>(res.Content);
+
+                string state = installation.installation.state;
+
+                return Ok(state);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error getting state.");
+            }
+        }
 
     }
 }
