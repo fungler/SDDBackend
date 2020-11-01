@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using SDDBackend.Models;
 using Newtonsoft.Json;
 using Octokit;
-using Microsoft.AspNetCore.Cors;
 
 namespace SDDBackend.Controllers
 {
@@ -14,13 +13,6 @@ namespace SDDBackend.Controllers
     [ApiController]
     public class HomeController : ControllerBase
     {
-        // GET: api/<HomeController>
-        [HttpGet]
-        public String Get()
-        {
-            return "Running";
-        }
-
         [HttpPost("registerJson")]
         public async Task<IActionResult> postJson([FromBody] InstallationRoot payload)
         {  
