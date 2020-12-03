@@ -49,8 +49,7 @@ namespace SDDBackend.Controllers
         public async Task<IActionResult> copyJson([FromBody] CopyData data)
         {
             try
-            {
-
+            {    
                 IActionResult actionResult = await getJson("installations/" + data.oldName + "/" + data.oldName + ".json");
                 OkObjectResult content = (OkObjectResult)actionResult;
 
