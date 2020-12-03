@@ -13,7 +13,6 @@ namespace SDDBackend.Controllers {
             var client = new GitHubClient(new ProductHeaderValue("marshmallouws"));
             client.Credentials = tokenAuth;
 
-
             var createFileRequest = new CreateFileRequest(pushMessage, fileContent);
             var repositoryResponse = await client.Repository.Get("marshmallouws", "scdfiles");
 
