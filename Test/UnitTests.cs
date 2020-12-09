@@ -21,8 +21,8 @@ namespace UnitTests
         public async Task createInstallation_installations_success()
         {
             // sending output as func param to avoid test output bugs compared to making a class field in simHandler
-            InstallationSim i1 = simHandler.createSuccessfulInstallation(1000, 1000, output);
-            InstallationSim i2 = simHandler.createSuccessfulInstallation(2000, 2000, output);
+            InstallationSim i1 = simHandler.createSuccessfulInstallation("success installation 1", 1000, 1000, output);
+            InstallationSim i2 = simHandler.createSuccessfulInstallation("success installation 2", 2000, 2000, output);
 
             // use whenall to make it run parallel and speed up mulitple setups
             await Task.WhenAll(
@@ -38,7 +38,7 @@ namespace UnitTests
         [Fact]
         public async Task createInstallation_installation_fail()
         {
-            InstallationSim i1 = simHandler.createFailedInstallation(1000, 1000, 1000, output);
+            InstallationSim i1 = simHandler.createFailedInstallation("failed installation 1", 1000, 1000, 1000, output);
 
             await Task.Run(async () =>
             {
@@ -51,8 +51,8 @@ namespace UnitTests
         [Fact]
         public async Task createInstallation_installations_success_and_fail()
         {
-            InstallationSim i1 = simHandler.createSuccessfulInstallation(1000, 1000, output);
-            InstallationSim i2 = simHandler.createFailedInstallation(1000, 1000, 1000, output);
+            InstallationSim i1 = simHandler.createSuccessfulInstallation("success installation 3", 1000, 1000, output);
+            InstallationSim i2 = simHandler.createFailedInstallation("failed installation 2", 1000, 1000, 1000, output);
 
             // use whenall to make it run parallel and speed up mulitple setups
             await Task.WhenAll(

@@ -9,7 +9,8 @@ namespace SDDBackend.Models
 
         private readonly ITestOutputHelper output;
 
-        public Guid id { get; set; }
+        public InstallationRoot installation;
+        public string name { get; set; }
         public StatusType status { get; set; }
         public DateTime creationDate { get; set; }
         public DateTime startDate { get; set; }
@@ -23,9 +24,10 @@ namespace SDDBackend.Models
         private int failTimeMs { get; set; } // how long till the setup should fail
 
 
-        public InstallationSim(Guid id, int startTime, int runTime, bool shouldFail, int failTime)
+        public InstallationSim(InstallationRoot installation, int startTime, int runTime, bool shouldFail, int failTime)
         {
-            this.id = id;
+            this.installation = installation;
+            this.name = installation.installation.name;
             this.status = StatusType.STATUS_COLD;
             this.creationDate = DateTime.Now;
             this.runTimeMs = runTime;
@@ -34,9 +36,10 @@ namespace SDDBackend.Models
             this.failTimeMs = failTime;
         }
 
-        public InstallationSim(Guid id, int startTime, int runTime, bool shouldFail, int failTime, ITestOutputHelper output)
+        public InstallationSim(InstallationRoot installation, int startTime, int runTime, bool shouldFail, int failTime, ITestOutputHelper output)
         {
-            this.id = id;
+            this.installation = installation;
+            this.name = installation.installation.name;
             this.status = StatusType.STATUS_COLD;
             this.creationDate = DateTime.Now;
             this.runTimeMs = runTime;
@@ -46,44 +49,56 @@ namespace SDDBackend.Models
             this.output = output;
         }
 
-        private async Task<InstallationSim> Fail()
+        public InstallationSim(string name, int startTime, int runTime, bool shouldFail, int failTime, ITestOutputHelper output)
         {
-            output.WriteLine(id + " Failing..");
-            await Task.Delay(failTimeMs);
-            endDate = DateTime.Now;
-            output.WriteLine(id + " - END: " + endDate);
-            status = StatusType.STATUS_FINISHED_FAILED;
-            output.WriteLine(id + " - STATUS: " + status);
-            return this;
+            this.name = name;
+            this.status = StatusType.STATUS_COLD;
+            this.creationDate = DateTime.Now;
+            this.runTimeMs = runTime;
+            this.startTimeMs = startTime;
+            this.shouldFail = shouldFail;
+            this.failTimeMs = failTime;
+            this.output = output;
         }
 
-        public async Task<InstallationSim> runSetup()
+        public InstallationSim(string name, int startTime, int runTime, bool shouldFail, int failTime)
+        {
+            this.name = name;
+            this.status = StatusType.STATUS_COLD;
+            this.creationDate = DateTime.Now;
+            this.runTimeMs = runTime;
+            this.startTimeMs = startTime;
+            this.shouldFail = shouldFail;
+            this.failTimeMs = failTime;
+        }
+
+        private async Task<StatusType> Fail()
+        {
+            await Task.Delay(failTimeMs);
+            endDate = DateTime.Now;
+            return StatusType.STATUS_FINISHED_FAILED;
+        }
+
+        public async Task<StatusType> runSetup()
         {
             startDate = DateTime.Now;
-            output.WriteLine(id + " - START: " + startDate);
 
             status = StatusType.STATUS_STARTING;
-            output.WriteLine(id + " - STATUS: " + status);
             await Task.Delay(startTimeMs);
 
-
             status = StatusType.STATUS_RUNNING;
-            output.WriteLine(id + " - STATUS: " + status);
-
             await Task.Delay(runTimeMs);
 
             if (shouldFail)
             {
-                InstallationSim failedInstallation = await Fail();
-                return this;
+                status = await Fail();
+                return status;
             }
             else
             {
                 endDate = DateTime.Now;
-                output.WriteLine(id + " - END: " + endDate);
                 status = StatusType.STATUS_FINISHED_SUCCESS;
-                output.WriteLine(id + " - STATUS: " + status);
-                return this;
+                return status;
             }
 
         }

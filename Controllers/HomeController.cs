@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using SDDBackend.Models;
 using Newtonsoft.Json;
 using Octokit;
+using SDDBackend.Handlers;
 
 namespace SDDBackend.Controllers
 {
@@ -13,17 +14,26 @@ namespace SDDBackend.Controllers
     [ApiController]
     public class HomeController : ControllerBase
     {
+        InstallationSimHandler simHandler = InstallationSimHandler.GetInstance();
+
+
         [HttpPost("registerJson")]
         public async Task<IActionResult> postJson([FromBody] InstallationRoot payload)
         {  
             try
             {
-                var jsonString = JsonConvert.SerializeObject(payload, Formatting.Indented);
-                /*foreach (Vm vm in payload.installation.vms)
+                InstallationSim instSim = simHandler.createSuccessfulInstallation(payload, 1000, 3000);
+                StatusType status = await instSim.runSetup();
+
+                if (status == StatusType.STATUS_FINISHED_SUCCESS)
                 {
-                    await GitController.createFile("Create: " + payload.installation.name, jsonString, "./installations/" + payload.installation.name + "/" + vm.name + ".json");
-                }*/
-                await GitController.createFile("Create: " + payload.installation.name, jsonString, "./installations/" + payload.installation.name + "/" + payload.installation.name + ".json");
+                    var jsonString = JsonConvert.SerializeObject(payload, Formatting.Indented);
+                    await GitController.createFile("Create: " + payload.installation.name, jsonString, "./installations/" + payload.installation.name + "/" + payload.installation.name + ".json");
+                }
+                else
+                {
+                    return BadRequest("{\"status\": 400, \"message\": \"Creation of installation failed.\"}");
+                }
             }
             catch (ApiValidationException e)
             {
@@ -31,6 +41,7 @@ namespace SDDBackend.Controllers
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.StackTrace);
                 return BadRequest("{\"status\": 400, \"message\": \"Unknown error.\"}");
             }
 
