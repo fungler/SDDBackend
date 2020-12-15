@@ -14,25 +14,25 @@ using Xunit;
 namespace SDDBackend.Integration.Tests
 {
 
-    public class HomeControllerTests : WebApplicationFactory<Startup>
+    public class TestControllerTest : IClassFixture<WebApplicationFactory<SDDBackend.Startup>>
     {
-        private readonly HttpClient client;
+        private readonly WebApplicationFactory<SDDBackend.Startup> _factory;
 
-        public HomeControllerTests()
+        public TestControllerTest(WebApplicationFactory<SDDBackend.Startup> factory)
         {
-            var appFactory = new WebApplicationFactory<Startup>();
-            client = appFactory.WithWebHostBuilder(builder => builder.UseSolutionRelativeContentRoot("./src/SDDBackend")).CreateClient();
+            _factory = factory;
         }
 
-        [Fact]
-        public async Task GetHttpRequest()
+        [Theory]
+        [InlineData("api/")]
+
+        public async Task GetEndpoints(string url)
         {
-            HttpResponseMessage response = await client.GetAsync("https://localhost:7001/api/home/registerJson/getState?name=inst-sim-01");
-            HttpStatusCode status = response.StatusCode;
+            var client = _factory.CreateClient();
 
-            // Assert 
-            Assert.Equal<HttpStatusCode>(HttpStatusCode.OK, status);
+            var res = await client.GetAsync(url);
+
+            Assert.Equal<HttpStatusCode>(HttpStatusCode.OK, res.StatusCode);
         }
-
     }
 }
