@@ -21,7 +21,7 @@ namespace SDDBackend.Integration.Tests
         public HomeControllerTests()
         {
             var appFactory = new WebApplicationFactory<Startup>();
-            client = appFactory.CreateClient();
+            client = appFactory.WithWebHostBuilder(builder => builder.UseSolutionRelativeContentRoot("./src/SDDBackend")).CreateClient();
         }
 
         [Fact]
