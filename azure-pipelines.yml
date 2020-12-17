@@ -15,10 +15,19 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- bash: init access token
-  env:
-    SCD_Access: $(SCD_Access)
-  
+- task: PowerShell@2
+  displayName: "Set env"
+  inputs:
+    targetType: filePath
+    filePath: ./setEnvironmentVariables.ps1
+    arguments: '$env:SCD_Access'
+
+- powershell: |
+   Write-Host "Sauce Username stored in ADO variables is=>$($env:SCD_Access)";
+
+- powershell: |
+   Write-Host "Sauce Username stored in Env Variables variables is=>$($env:SCD_Access)";
+
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:

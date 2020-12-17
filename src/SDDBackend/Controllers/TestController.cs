@@ -11,7 +11,6 @@ using SDDBackend.Handlers;
 
 namespace SDDBackend.Controllers
 {
-    
     [Route("api")]
     [ApiController]
     public class TestController : ControllerBase
@@ -21,6 +20,5 @@ namespace SDDBackend.Controllers
         {
             return "Running";
         }
-
     }
 }
