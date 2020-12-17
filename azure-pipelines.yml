@@ -21,13 +21,13 @@ steps:
   inputs:
     targetType: filePath
     filePath: ./setEnvironmentVariables.ps1
-    arguments: '$env:GitHubPAT'
+    arguments: '$env:scd'
 
 - powershell: |
-   Write-Host "Sauce Username stored in ADO variables is=>$($env:GitHubPAT)";
+   Write-Host "Sauce Username stored in ADO variables is=>$($env:scd)";
 
 - powershell: |
-   Write-Host "Sauce Username stored in Env Variables variables is=>$($env:GitHubPAT)";
+   Write-Host "Sauce Username stored in Env Variables variables is=>$($env:scd)";
 
 
 - task: DotNetCoreCLI@2
