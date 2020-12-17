@@ -15,7 +15,8 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: PowerShell@2
+- powershell: |
+    Write-Host "Using an input-macro works: $(GitHubPAT)"
   env:
     SCD_Access: $(GitHubPAT) # the recommended way to map to an env variable
 
