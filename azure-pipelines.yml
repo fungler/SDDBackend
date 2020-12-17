@@ -13,8 +13,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  env:
-    SCD_Access: $(GitHubPAT)
+  SCD_Access: $(GitHubPAT)
 
 steps:
 
