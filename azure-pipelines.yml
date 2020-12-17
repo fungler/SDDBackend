@@ -16,19 +16,6 @@ variables:
   SCD_Access: $(GitHubPAT)
 
 steps:
-- task: PowerShell@2
-  displayName: "Set env"
-  inputs:
-    targetType: filePath
-    filePath: ./setEnvironmentVariables.ps1
-    arguments: '$env:SCD_Access'
-
-- powershell: |
-   Write-Host "stored in ADO variables is=>$($env:SCD_Access)";
-
-- powershell: |
-   Write-Host "stored in Env Variables variables is=>$($env:SCD_Access)";
-
 
 - task: DotNetCoreCLI@2
   displayName: Build
