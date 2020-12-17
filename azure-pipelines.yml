@@ -13,11 +13,9 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  SCD_Access: '$(SCD_Access)'
 
 steps:
-- bash: init access token
-  env:
-    SCD_Access: $(SCD_Access)
   
 - task: DotNetCoreCLI@2
   displayName: Build
