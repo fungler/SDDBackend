@@ -13,9 +13,11 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  SCD_Access: $(GitHubPAT)
 
 steps:
+- task: PowerShell@2
+  env:
+    SCD_Access: $(GitHubPAT) # the recommended way to map to an env variable
 
 - task: DotNetCoreCLI@2
   displayName: Build
