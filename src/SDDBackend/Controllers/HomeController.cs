@@ -18,7 +18,7 @@ namespace SDDBackend.Controllers
 
 
         [HttpPost("registerJson")]
-        public async Task<IActionResult> postJson([FromBody] InstallationRoot payload)
+        public async Task<IActionResult> postJson([FromBody] InstallationRoot payload, [FromQuery] string repo = "scdfiles")
         {  
             try
             {
@@ -28,7 +28,7 @@ namespace SDDBackend.Controllers
                 if (status == StatusType.STATUS_FINISHED_SUCCESS)
                 {
                     var jsonString = JsonConvert.SerializeObject(payload, Formatting.Indented);
-                    await GitController.createFile("Create: " + payload.installation.name, jsonString, "./installations/" + payload.installation.name + "/" + payload.installation.name + ".json");
+                    await GitController.createFile("Create: " + payload.installation.name, jsonString, "./installations/" + payload.installation.name + "/" + payload.installation.name + ".json", repo);
                 }
                 else
                 {
@@ -49,17 +49,17 @@ namespace SDDBackend.Controllers
         }
 
         [HttpPost("registerJson/copy")]
-        public async Task<IActionResult> copyJson([FromBody] CopyData data)
+        public async Task<IActionResult> copyJson([FromBody] CopyData data, [FromQuery] string repo = "scdfiles")
         {
             try
-            {    
-                IActionResult actionResult = await getJson("installations/" + data.oldName + "/" + data.oldName + ".json");
-                OkObjectResult content = (OkObjectResult)actionResult;
+            {
+                IActionResult actionResult = await getJson("installations/" + data.oldName + "/" + data.oldName + ".json", repo);
+                var content = actionResult as OkObjectResult;
 
-                string jsonString = (string)content.Value;
+                string jsonString = content.Value.ToString();
                 jsonString = jsonString.Replace(data.oldName, data.newName);
 
-                await GitController.createFile("Copy: " + data.oldName + " as " + data.newName, jsonString, "./installations/" + data.newName + "/" + data.newName + ".json");
+                await GitController.createFile("Copy: " + data.oldName + " as " + data.newName, jsonString, "./installations/" + data.newName + "/" + data.newName + ".json", repo);
             
             }
             catch (NullReferenceException e)
@@ -79,11 +79,11 @@ namespace SDDBackend.Controllers
         }
 
         [HttpGet("registerJson/getFile")]
-        public async Task<IActionResult> getJson([FromQuery] string path)
+        public async Task<IActionResult> getJson([FromQuery] string path, [FromQuery] string repo = "scdfiles")
         {
             try
             {
-                var content = await GitController.getFile(path);
+                var content = await GitController.getFile(path, repo);
                 var res = content.ElementAt<RepositoryContent>(0);
 
                 return Ok(res.Content);
@@ -95,13 +95,13 @@ namespace SDDBackend.Controllers
         }
 
         [HttpGet("registerJson/getState")]
-        public async Task<IActionResult> getState([FromQuery] string name)
+        public async Task<IActionResult> getState([FromQuery] string name, [FromQuery] string repo = "scdfiles")
         {
             string path = "installations/" + name + "/" + name + ".json";
 
             try
             {
-                var content = await GitController.getFile(path);
+                var content = await GitController.getFile(path, repo);
                 var res = content.ElementAt<RepositoryContent>(0);
 
                 InstallationRoot installation = JsonConvert.DeserializeObject<InstallationRoot>(res.Content);
