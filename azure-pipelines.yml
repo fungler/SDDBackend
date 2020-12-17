@@ -24,10 +24,10 @@ steps:
     arguments: '$env:SCD_Access'
 
 - powershell: |
-   Write-Host "Sauce Username stored in ADO variables is=>$($env:SCD_Access)";
+   Write-Host "stored in ADO variables is=>$($env:SCD_Access)";
 
 - powershell: |
-   Write-Host "Sauce Username stored in Env Variables variables is=>$($env:SCD_Access)";
+   Write-Host "stored in Env Variables variables is=>$($env:SCD_Access)";
 
 
 - task: DotNetCoreCLI@2
