@@ -15,6 +15,9 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+  - bash: init access token
+    env:
+      SCD_Access: $(SCD_Access)
   
 - task: DotNetCoreCLI@2
   displayName: Build
