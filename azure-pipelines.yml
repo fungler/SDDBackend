@@ -13,6 +13,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  SCD_Access: $(SCD_Access)
 
 steps:
 - task: PowerShell@2
@@ -27,6 +28,7 @@ steps:
 
 - powershell: |
    Write-Host "Sauce Username stored in Env Variables variables is=>$($env:SCD_Access)";
+
 
 - task: DotNetCoreCLI@2
   displayName: Build
