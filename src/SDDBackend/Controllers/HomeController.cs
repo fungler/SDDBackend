@@ -15,7 +15,7 @@ namespace SDDBackend.Controllers
     public class HomeController : ControllerBase
     {
         InstallationSimHandler simHandler = InstallationSimHandler.GetInstance();
-        InstallationSimulation sim = new InstallationSimulation();
+        //InstallationSimulation sim = new InstallationSimulation();
 
 
         [HttpPost("registerJson")]
@@ -23,30 +23,28 @@ namespace SDDBackend.Controllers
         {  
             try
             {
-                InstallationSim instSim = simHandler.createSuccessfulInstallation(payload, 1000, 3000);
+                InstallationSim instSim = simHandler.createSuccessfulInstallation(payload, 4000, 6000);
                 StatusType status = await instSim.runSetup();
 
                 if (status == StatusType.STATUS_FINISHED_SUCCESS)
                 {
                     var jsonString = JsonConvert.SerializeObject(payload, Formatting.Indented);
                     await GitController.createFile("Create: " + payload.installation.name, jsonString, "./installations/" + payload.installation.name + "/" + payload.installation.name + ".json", repo);
+                    return Ok("{\"status\": 200, \"message\": \"Success.\", \"installation_status\": \"" + status +"\"}");
                 }
                 else
                 {
-                    return BadRequest("{\"status\": 400, \"message\": \"Creation of installation failed.\"}");
+                    return BadRequest("{\"status\": 400, \"message\": \"Creation of installation failed.\", \"installation_status\": \"" + StatusType.STATUS_FINISHED_FAILED + "\"}");
                 }
             }
             catch (ApiValidationException e)
             {
-                return BadRequest("{\"status\": 400, \"message\": \"File already exists in github repo.\"}");
+                return BadRequest("{\"status\": 400, \"message\": \"File already exists in github repo.\", \"installation_status\": \"" + StatusType.STATUS_FINISHED_FAILED + "\"}");
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.StackTrace);
-                return BadRequest("{\"status\": 400, \"message\": \"Unknown error.\"}");
+                return BadRequest("{\"status\": 400, \"message\": \"Unknown error.\", \"installation_status\": \"" + StatusType.STATUS_FINISHED_FAILED + "\"}");
             }
-
-            return Ok("{\"status\": 200, \"message\": \"Success.\"}");
         }
 
         [HttpPost("registerJson/copy")]
@@ -60,8 +58,14 @@ namespace SDDBackend.Controllers
                 string jsonString = content.Value.ToString();
                 jsonString = jsonString.Replace(data.oldName, data.newName);
 
-                await GitController.createFile("Copy: " + data.oldName + " as " + data.newName, jsonString, "./installations/" + data.newName + "/" + data.newName + ".json", repo);
-            
+                InstallationRoot newInstallation = JsonConvert.DeserializeObject<InstallationRoot>(jsonString);
+                InstallationSim sim = simHandler.createSuccessfulInstallation(newInstallation, 4000, 6000);
+                await sim.runSetup();
+
+                if (sim.status == StatusType.STATUS_FINISHED_SUCCESS)
+                    await GitController.createFile("Copy: " + data.oldName + " as " + data.newName, jsonString, "./installations/" + data.newName + "/" + data.newName + ".json", repo);
+                else
+                    return BadRequest("{\"status\": 400, \"message\": \"Failed to create file.\", \"installation_status\": \"" + sim.status + "\"}");
             }
             catch (NullReferenceException e)
             {
@@ -76,7 +80,7 @@ namespace SDDBackend.Controllers
                 return BadRequest("{\"status\": 400, \"message\": \"Unknown error.\"}");
             }
 
-            return Ok("{\"status\": 200, \"message\": \"Success.\"}");
+            return Ok("{\"status\": 200, \"message\": \"Success.\", \"installation_status\": \"" + StatusType.STATUS_FINISHED_SUCCESS + "\"}");
         }
 
         [HttpGet("registerJson/getFile")]
@@ -118,31 +122,26 @@ namespace SDDBackend.Controllers
         }
 
         [HttpPost("start")]
-        public async Task<IActionResult> startInstallation()
+        public async Task<IActionResult> startInstallation([FromBody] StartStopData data)
         {
-            var success = await sim.StartInstallation();
-            if(success)
-            {
-                return Ok();
-            }
+            StatusType status =  await InstallationSim.StartInstallation();
+
+            if(status == StatusType.STATUS_RUNNING)
+                return Ok("{\"status\": 200, \"message\": \"Success.\", \"installation_status\": \"" + status + "\"}");
             else
-            {
-                return BadRequest();
-            }
+                return BadRequest("{\"status\": 400, \"message\": \"Failed to start installation.\", \"installation_status\": \"" + status + "\"}");
         }
 
         [HttpPost("stop")]
-        public async Task<IActionResult> stopInstallation()
+        public async Task<IActionResult> stopInstallation([FromBody] StartStopData data)
         {
-            var success = await sim.StopInstallation();
-            if(success)
-            {
-                return Ok();
-            }
+            StatusType status = await InstallationSim.StopInstallation();
+
+            if (status == StatusType.STATUS_STOPPED)
+                return Ok("{\"status\": 200, \"message\": \"Success.\", \"installation_status\": \"" + status + "\"}");
             else
-            {
-                return BadRequest();
-            }
+                return BadRequest("{\"status\": 400, \"message\": \"Failed to start installation.\", \"installation_status\": \"" + status + "\"}");
+
         }
     }
 }

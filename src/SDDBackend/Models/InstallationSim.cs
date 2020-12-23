@@ -103,5 +103,43 @@ namespace SDDBackend.Models
 
         }
 
+        public static async Task<StatusType> StartInstallation()
+        {
+            Random rnd = new Random();
+
+            int minDelay = 1000;
+            int maxDelay = 10000;
+
+            int successPercent = 90;
+
+            int delay = rnd.Next(minDelay, maxDelay + 1);
+            int success = rnd.Next(1, 101);
+
+            await Task.Delay(delay);
+            if (success <= successPercent) // 1-90 = success
+                return StatusType.STATUS_RUNNING;
+            else
+                return StatusType.STATUS_START_FAILED;
+        }
+
+        public static async Task<StatusType> StopInstallation()
+        {
+            Random rnd = new Random();
+
+            int minDelay = 1000;
+            int maxDelay = 10000;
+            int successPercent = 80;
+
+            int delay = rnd.Next(minDelay, maxDelay + 1);
+            int success = rnd.Next(1, 101);
+
+            await Task.Delay(delay);
+
+            if (success <= successPercent)
+                return StatusType.STATUS_STOPPED;
+            else
+                return StatusType.STATUS_STOP_FAILED;
+        }
+
     }
 }
