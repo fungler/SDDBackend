@@ -15,6 +15,7 @@ namespace SDDBackend.Controllers
     public class HomeController : ControllerBase
     {
         InstallationSimHandler simHandler = InstallationSimHandler.GetInstance();
+        InstallationSimulation sim = new InstallationSimulation();
 
 
         [HttpPost("registerJson")]
@@ -116,5 +117,32 @@ namespace SDDBackend.Controllers
             }
         }
 
+        [HttpPost("start")]
+        public async Task<IActionResult> startInstallation()
+        {
+            var success = await sim.StartInstallation();
+            if(success)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("stop")]
+        public async Task<IActionResult> stopInstallation()
+        {
+            var success = await sim.StopInstallation();
+            if(success)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
     }
 }
