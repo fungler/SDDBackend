@@ -17,11 +17,11 @@ namespace SDDBackend.Models
         public DateTime endDate { get; set; }
 
         // config
-        private int startTimeMs { get; set; } // how long should the setup/init run for
-        private int runTimeMs { get; set; } // how long should the setup run for
-        private int stopTimeMs { get; set; } // how long should the setup stop for
-        private bool shouldFail { get; set; } // should this installation fail
-        private int failTimeMs { get; set; } // how long till the setup should fail
+        public int startTimeMs { get; set; } // how long should the setup/init run for
+        public int runTimeMs { get; set; } // how long should the setup run for
+        public int stopTimeMs { get; set; } // how long should the setup stop for
+        public bool shouldFail { get; set; } // should this installation fail
+        public int failTimeMs { get; set; } // how long till the setup should fail
 
 
         public InstallationSim(InstallationRoot installation, int startTime, int runTime, bool shouldFail, int failTime)

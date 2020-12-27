@@ -63,5 +63,52 @@ namespace UnitTests
             Assert.Equal(StatusType.STATUS_FINISHED_SUCCESS, i1.status);
             Assert.Equal(StatusType.STATUS_FINISHED_FAILED, i2.status);
         }
+
+        [Fact]
+        public void create_random_installation_success()
+        {
+            InstallationRoot testInst = new InstallationRoot();
+            // set data of installation to avoid null reference
+            testInst.installation = new Installation();
+            testInst.installation.name = "TEST_INSTALLATION";
+
+            InstallationSim instSim = simHandler.createFailedInstallationByChance(testInst, 0);
+            Assert.False(instSim.shouldFail);
+        }
+
+        [Fact]
+        public void create_random_installation_fail()
+        {
+            InstallationRoot testInst = new InstallationRoot();
+            // set data of installation to avoid null reference
+            testInst.installation = new Installation();
+            testInst.installation.name = "TEST_INSTALLATION";
+
+            InstallationSim instSim = simHandler.createFailedInstallationByChance(testInst, 100);
+            Assert.True(instSim.shouldFail);
+        }
+
+        [Fact]
+        public void create_random_installations()
+        {
+            int numOfFailedInstallations = 0;
+
+            InstallationRoot testInst = new InstallationRoot();
+            // set data of installation to avoid null reference
+            testInst.installation = new Installation();
+            testInst.installation.name = "TEST_INSTALLATION";
+
+            for (int i = 0; i < 1000; i++)
+            {
+                InstallationSim instSim = simHandler.createFailedInstallationByChance(testInst, 50);
+
+                if (instSim.shouldFail)
+                    numOfFailedInstallations++;
+            }
+
+            output.WriteLine("" + numOfFailedInstallations); // print the actual number of failed installations
+            // Assume that at least 1 installation will fail on a thousand runs with a 50% chance of failing
+            Assert.True(numOfFailedInstallations > 0);
+        }
     }
 }

@@ -10,6 +10,8 @@ namespace SDDBackend.Handlers
         static InstallationSimHandler() { }
         private InstallationSimHandler() { }
 
+        Random rand = new Random();
+
         public static InstallationSimHandler GetInstance()
         {
             return instance;
@@ -63,6 +65,23 @@ namespace SDDBackend.Handlers
         {
             InstallationSim installationFail = new InstallationSim(name, startTime, runTime, true, failTime);
             return installationFail;
+        }
+
+
+        public InstallationSim createFailedInstallationByChance(InstallationRoot installation, int chance)
+        {
+            InstallationSim randomInstallation;
+
+            int installationChance = rand.Next(1, 101);
+            int rndMin = rand.Next(3000, 6001);
+            int rndMax = rand.Next(4000, 10001);
+
+            if (installationChance <= chance)
+                randomInstallation = new InstallationSim(installation, rndMin, rndMax, true, 2000);
+            else
+                randomInstallation = new InstallationSim(installation, rndMin, rndMax, false, 0);
+
+            return randomInstallation;
         }
     }
 }

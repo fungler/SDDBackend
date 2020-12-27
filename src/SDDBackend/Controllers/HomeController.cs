@@ -23,7 +23,8 @@ namespace SDDBackend.Controllers
         {  
             try
             {
-                InstallationSim instSim = simHandler.createSuccessfulInstallation(payload, 4000, 6000);
+                // create installation with a 10% chance of failing
+                InstallationSim instSim = simHandler.createFailedInstallationByChance(payload, 10);
                 StatusType status = await instSim.runSetup();
 
                 if (status == StatusType.STATUS_FINISHED_SUCCESS)
@@ -59,7 +60,8 @@ namespace SDDBackend.Controllers
                 jsonString = jsonString.Replace(data.oldName, data.newName);
 
                 InstallationRoot newInstallation = JsonConvert.DeserializeObject<InstallationRoot>(jsonString);
-                InstallationSim sim = simHandler.createSuccessfulInstallation(newInstallation, 4000, 6000);
+                // create installation with a 10% chance of failing
+                InstallationSim sim = simHandler.createFailedInstallationByChance(newInstallation, 10);
                 await sim.runSetup();
 
                 if (sim.status == StatusType.STATUS_FINISHED_SUCCESS)
