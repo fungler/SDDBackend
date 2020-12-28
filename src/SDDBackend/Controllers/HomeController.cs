@@ -15,8 +15,6 @@ namespace SDDBackend.Controllers
     public class HomeController : ControllerBase
     {
         InstallationSimHandler simHandler = InstallationSimHandler.GetInstance();
-        //InstallationSimulation sim = new InstallationSimulation();
-
 
         [HttpPost("registerJson")]
         public async Task<IActionResult> postJson([FromBody] InstallationRoot payload, [FromQuery] string repo = "scdfiles")
@@ -38,11 +36,11 @@ namespace SDDBackend.Controllers
                     return BadRequest("{\"status\": 400, \"message\": \"Creation of installation failed.\", \"installation_status\": \"" + StatusType.STATUS_FINISHED_FAILED + "\"}");
                 }
             }
-            catch (ApiValidationException e)
+            catch (ApiValidationException)
             {
                 return BadRequest("{\"status\": 400, \"message\": \"File already exists in github repo.\", \"installation_status\": \"" + StatusType.STATUS_FINISHED_FAILED + "\"}");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return BadRequest("{\"status\": 400, \"message\": \"Unknown error.\", \"installation_status\": \"" + StatusType.STATUS_FINISHED_FAILED + "\"}");
             }
@@ -69,15 +67,15 @@ namespace SDDBackend.Controllers
                 else
                     return BadRequest("{\"status\": 400, \"message\": \"Failed to create file.\", \"installation_status\": \"" + sim.status + "\"}");
             }
-            catch (NullReferenceException e)
+            catch (NullReferenceException)
             {
                 return BadRequest("{\"status\": 400, \"message\": \"Could not find file with the given filename.\"}");
             }
-            catch (ApiValidationException e)
+            catch (ApiValidationException)
             {
                 return BadRequest("{\"status\": 400, \"message\": \"File already exists in github repo.\"}");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return BadRequest("{\"status\": 400, \"message\": \"Unknown error.\"}");
             }
@@ -95,7 +93,7 @@ namespace SDDBackend.Controllers
 
                 return Ok(res.Content);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return BadRequest("Error getting file.");
             }
@@ -117,7 +115,7 @@ namespace SDDBackend.Controllers
 
                 return Ok(state);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return BadRequest("Error getting state.");
             }

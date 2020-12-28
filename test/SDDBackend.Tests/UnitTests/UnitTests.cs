@@ -106,7 +106,6 @@ namespace UnitTests
                     numOfFailedInstallations++;
             }
 
-            output.WriteLine("" + numOfFailedInstallations); // print the actual number of failed installations
             // Assume that at least 1 installation will fail on a thousand runs with a 50% chance of failing
             Assert.True(numOfFailedInstallations > 0);
         }
