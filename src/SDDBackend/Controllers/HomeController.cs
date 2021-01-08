@@ -51,7 +51,7 @@ namespace SDDBackend.Controllers
         {
             try
             {
-                IActionResult actionResult = await getJson("installations/" + data.oldName + "/" + data.oldName + ".json", repo);
+                IActionResult actionResult = await getJson(data.oldName, repo);
                 var content = actionResult as OkObjectResult;
 
                 string jsonString = content.Value.ToString();
@@ -63,7 +63,7 @@ namespace SDDBackend.Controllers
                 await sim.runSetup();
 
                 if (sim.status == StatusType.STATUS_FINISHED_SUCCESS)
-                    await GitController.createFile("Copy: " + data.oldName + " as " + data.newName, jsonString, "./installations/" + data.newName + "/" + data.newName + ".json", repo);
+                    await GitController.CopyFile(data.newName, data.oldName, repo, jsonString);
                 else
                     return BadRequest("{\"status\": 400, \"message\": \"Failed to create file.\", \"installation_status\": \"" + sim.status + "\"}");
             }
@@ -84,8 +84,9 @@ namespace SDDBackend.Controllers
         }
 
         [HttpGet("registerJson/getFile")]
-        public async Task<IActionResult> getJson([FromQuery] string path, [FromQuery] string repo = "scdfiles")
+        public async Task<IActionResult> getJson([FromQuery] string instName, [FromQuery] string repo = "scdfiles")
         {
+            string path = "./installations/" + instName + "/" + instName + ".json";
             try
             {
                 var content = await GitController.getFile(path, repo);

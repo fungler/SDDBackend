@@ -203,7 +203,7 @@ namespace SDDBackend.Integration.Tests
         }
 
         [Theory, Priority(3)]
-        [InlineData("api/home/registerJson/getFile?path=installations/TESTING-INSTALLATION/TESTING-INSTALLATION.json&repo=scdfiles_test")]
+        [InlineData("api/home/registerJson/getFile?instName=TESTING-INSTALLATION&repo=scdfiles_test")]
         public async Task GetInstallation(string url)
         {
             var client = _factory.CreateClient();

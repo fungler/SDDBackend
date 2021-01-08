@@ -17,6 +17,23 @@ namespace SDDBackend.Controllers {
             return await client.Repository.Content.GetAllContents("marshmallouws", repo, path);
         }
 
+
+        public static async Task CopyFile(string instName, string oldName, string repo, string fileContent)
+        {
+            var pushMessage = "Copy: " + oldName + " as " + instName;
+            var path = "./installations/" + instName + "/" + instName + ".json";
+            var access_token = System.Environment.GetEnvironmentVariable("SCD_Access");
+            var tokenAuth = new Credentials(access_token);
+            var client = new GitHubClient(new ProductHeaderValue("marshmallouws"));
+            client.Credentials = tokenAuth;
+
+            var createFileRequest = new CreateFileRequest(pushMessage, fileContent);
+            var repositoryResponse = await client.Repository.Get("marshmallouws", repo);
+
+            await client.Repository.Content.CreateFile(repositoryResponse.Id, path, createFileRequest);
+
+        }
+
         public static async Task createFile(string pushMessage, string fileContent, string path, string repo)
         {
             var access_token = System.Environment.GetEnvironmentVariable("SCD_Access");
