@@ -17,21 +17,20 @@ namespace UnitTests
             this.output = output;
         }
 
-        [Fact]
-        public async Task createInstallation_installations_success()
+        [Theory]
+        [InlineData("success installation 1", 1000, 1000)]
+        [InlineData("success installation 2", 2000, 2000)]
+        public async Task createInstallation_installations_success(string inst, int startTime, int runTime)
         {
             // sending output as func param to avoid test output bugs compared to making a class field in simHandler
-            InstallationSim i1 = simHandler.createSuccessfulInstallation("success installation 1", 1000, 1000, output);
-            InstallationSim i2 = simHandler.createSuccessfulInstallation("success installation 2", 2000, 2000, output);
+            InstallationSim i1 = simHandler.createSuccessfulInstallation(inst, startTime, runTime, output);
 
             // use whenall to make it run parallel and speed up mulitple setups
             await Task.WhenAll(
-                Task.Run(() => i1.runSetup()),
-                Task.Run(() => i2.runSetup())
+                Task.Run(() => i1.runSetup())
             );
 
             Assert.Equal(StatusType.STATUS_FINISHED_SUCCESS, i1.status);
-            Assert.Equal(StatusType.STATUS_FINISHED_SUCCESS, i2.status);
         }
 
 
